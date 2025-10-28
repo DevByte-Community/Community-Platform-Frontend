@@ -23,9 +23,9 @@
 
 import React, { useState, useMemo } from "react";
 import HeaderWrapper from "@/components/ui/Header";
-import MemberModal from "./MemberModal";
-import MemberCard from "./MemberCard";
-import MemberSidebar from "./MemberSidebar";
+import MemberModal from "./memberModal";
+import MemberCard from "./memberCard";
+import MemberSidebar from "./memberSidebar";
 import { memberData, roles, allSkills } from "./memberData";
 
 const MemberPage = () => {

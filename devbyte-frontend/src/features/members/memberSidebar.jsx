@@ -5,7 +5,7 @@
  */
 
 import React, { useState } from "react";
-import MemberFilter from "./MemberFilter";
+import MemberFilter from "./memberFilter";
 
 const MemberSidebar = (props) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
