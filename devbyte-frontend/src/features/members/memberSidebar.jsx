@@ -14,7 +14,7 @@ const MemberSidebar = (props) => {
     <>
       {/* Toggle Button - Mobile only */}
       <button
-        className="lg:hidden fixed top-20 left-0 z-40 p-2 bg-white dark:bg-gray-900 rounded-r-lg shadow-lg border border-gray-200 dark:border-gray-700"
+        className="fixed left-0 z-40 p-2 bg-white border border-gray-200 rounded-r-lg shadow-lg lg:hidden top-20 dark:bg-gray-900 dark:border-gray-700"
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         aria-label={isSidebarOpen ? "Close sidebar" : "Open Sidebar"}
       >
@@ -29,7 +29,7 @@ const MemberSidebar = (props) => {
                     ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} 
                     lg:hidden`}
       >
-        <div className="p-4 overflow-y-auto h-full">
+        <div className="h-full p-4 overflow-y-auto">
           <MemberFilter {...props} />
         </div>
       </aside>
@@ -37,13 +37,13 @@ const MemberSidebar = (props) => {
       {/* Overlay for mobile */}
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-20 lg:hidden"
+          className="fixed inset-0 z-20 bg-black/50 lg:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
       {/* Filter Box - Desktop */}
-      <div className="hidden lg:flex justify-center z-20 bg-transparent">
+      <div className="z-20 justify-center hidden bg-transparent lg:flex">
         <div
           className="bg-white dark:bg-[#0D1117] border border-gray-200 dark:border-gray-700
                      rounded-2xl shadow-lg px-6 py-3 w-[80%] max-w-6xl"

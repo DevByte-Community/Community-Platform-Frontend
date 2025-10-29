@@ -18,6 +18,8 @@ import TermsOfService from "@/pages/TermsOfService.jsx";
 import PrivacyPolicy from "@/pages/PrivacyPolicy.jsx";
 import Jobs from "@/pages/Jobs.jsx";
 import Member from "@/pages/Member.jsx";
+import Contact from "@/pages/Contact.jsx";
+
 
 export default function AppRoutes() {
   return (
@@ -32,7 +34,7 @@ export default function AppRoutes() {
         <Route path="faq" element={<FAQ />} />
         <Route path="events" element={<Events />} />
         <Route path="projects" element={<Projects />} />
-        <Route path="jobs" element={<Jobs/>}/>
+        <Route path="jobs" element={<Jobs />} />
         <Route path="blogs" element={<Blogs />} />
         <Route path="members" element={<Member />} />
         <Route path="forget-password" element={<ForgetPassword />} />
@@ -40,6 +42,7 @@ export default function AppRoutes() {
         <Route path="reset-password" element={<ResetPassword />} />
         <Route path="terms" element={<TermsOfService />} />
         <Route path="policy" element={<PrivacyPolicy />} />
+        <Route path="contact" element={<Contact />} />
       </Route>
     </Routes>
   );

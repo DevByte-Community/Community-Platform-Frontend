@@ -124,12 +124,12 @@ const MemberPage = () => {
 
         {/* Main Content Area - Takes remaining space */}
         <main className="flex-1 min-w-0">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
             {/* Members Grid or Empty State */}
             {displayedMembers.length > 0 ? (
               <>
                 {/* Grid of member cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+                <div className="grid grid-cols-1 gap-6 mb-8 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
                   {displayedMembers.map((member) => (
                     <MemberCard
                       key={member.id}
@@ -155,7 +155,7 @@ const MemberPage = () => {
               </>
             ) : (
               // Empty state when no members match filters
-              <div className="text-center py-16">
+              <div className="py-16 text-center">
                 <div className="text-gray-600 dark:text-[#8B949E] text-lg mb-2">
                   No members found
                 </div>
