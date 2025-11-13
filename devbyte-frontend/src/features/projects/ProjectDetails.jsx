@@ -69,7 +69,7 @@ const ProjectDetails = () => {
                         <Link to={project.live} className='absolute bottom-2 md:bottom-8 border-b-2 border-[#28A6DE] text-[14px]'>
                             Live Project
                         </Link>
-                        <div className='mockup-window border bg-base-300 md:w-[750px] mx-auto shadow-2xl rounded-xl overflow-hidden'>
+                        <div className='mockup-window border bg-base-300 md:w-[750px] lg:w-[750px] mx-auto shadow-2xl rounded-xl overflow-hidden'>
                             <img src={project.image} alt={project.title} className='w-full h-auto' />
                         </div>
                     </div>
