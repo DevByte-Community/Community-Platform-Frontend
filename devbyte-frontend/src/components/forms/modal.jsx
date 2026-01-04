@@ -7,7 +7,7 @@ export const Modal = ({ isOpen, onClose, title, children }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-gray-700 rounded-xl w-auto sm:w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-gray-700 rounded-xl w-full sm:w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
