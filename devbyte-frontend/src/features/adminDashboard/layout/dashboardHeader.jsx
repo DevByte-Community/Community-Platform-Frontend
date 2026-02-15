@@ -1,6 +1,7 @@
 import React from "react";
 import { Search, Bell, Menu } from 'lucide-react';
 import { getMemberAvatar } from "@/services/membersService";
+import { useNavigate } from "react-router-dom";
 
 // SearchBar Component
 const SearchBar = () => {
@@ -48,9 +49,12 @@ const UserAvatar = ({ user }) => {
 
   const avatarUrl = getMemberAvatar(user);
   const hasImage = user?.profilePicture || user?.profile_picture;
+  const navigate = useNavigate();
 
   return (
-    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold overflow-hidden border-2 border-white dark:border-slate-800 shadow-sm">
+    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold overflow-hidden border-2
+     border-white dark:border-slate-800 shadow-sm"
+     onClick={() => navigate("/profile")}>
       {hasImage ? (
         <img 
           src={avatarUrl} 

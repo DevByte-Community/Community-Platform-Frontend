@@ -18,7 +18,7 @@ export const useProjects = (initialParams = {}) => {
       const response = await projectService.getAllProjects(params);
       
       if (response.success) {
-        setProjects(response.data || []);
+        setProjects(response.projects || []);
         setPagination(response.pagination);
       }
     } catch (err) {
@@ -49,7 +49,7 @@ export const useProjects = (initialParams = {}) => {
       const response = await projectService.createProject(data);
       if (response.success) {
         await fetchProjects();
-        return { success: true, project: response.data };
+        return { success: true, project: response.project };
       }
     } catch (err) {
       return { success: false, error: err.message };
@@ -60,7 +60,7 @@ export const useProjects = (initialParams = {}) => {
     try {
       const response = await projectService.updateProject(id, data);
       if (response.success) {
-        setProjects(prev => prev.map(p => p.id === id ? response.data : p));
+        setProjects(prev => prev.map(p => p.id === id ? response.project : p));
         return { success: true };
       }
     } catch (err) {
@@ -86,7 +86,7 @@ export const useProjects = (initialParams = {}) => {
         ? await projectService.addTechs(id, techIds)
         : await projectService.removeTechs(id, techIds);
       if (response.success) {
-        setProjects(prev => prev.map(p => p.id === id ? response.data : p));
+        setProjects(prev => prev.map(p => p.id === id ? response.project : p));
         return { success: true };
       }
     } catch (err) {
@@ -101,7 +101,7 @@ export const useProjects = (initialParams = {}) => {
         : await projectService.removeContributors(id, userIds);
       
       if (response.success) {
-        setProjects(prev => prev.map(p => p.id === id ? response.data : p));
+        setProjects(prev => prev.map(p => p.id === id ? response.project : p));
         return { success: true };
       }
     } catch (err) {

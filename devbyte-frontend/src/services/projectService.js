@@ -15,9 +15,31 @@ export const projectService = {
 
   // Create project
   createProject: async (data) => {
+    const hasFile = data.coverImage instanceof File;
+
+    if (hasFile) {
+      const formData = new FormData();
+      
+      formData.append('title', data.title);
+      formData.append('description', data.description);
+      if (data.repoLink) formData.append('repoLink', data.repoLink);
+      formData.append('featured', data.featured);
+      formData.append('techs', JSON.stringify(data.techs || []));
+      formData.append('contributors', JSON.stringify(data.contributors || []));
+
+      formData.append('coverImage', data.coverImage);
+
+      return apiFetch('/projects', {
+        method: 'POST',
+        body: formData,
+      });
+    }
+
+    // if it's not a file , it 's an url 
+    const { coverImage, ...jsonData } = data;
     return apiFetch('/projects', {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: JSON.stringify(jsonData),
     });
   },
 

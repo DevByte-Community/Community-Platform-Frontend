@@ -1,5 +1,6 @@
 import { Upload , Plus, X } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState, useEffect } from "react";
+
 // ==================== Form Input Components ====================
 
 // Inputs field
@@ -197,7 +198,34 @@ export const MultiSelectField = ({
 
 
 // image upload field
-export const ImageUpload = ({ label, value, onChange, required = false }) => (
+export const ImageUpload = ({ label, value, onChange, required = false }) => {
+const fileInputRef = useRef(null);
+const [preview, setPreview] = useState("");
+
+// (Preview)
+useEffect(() => {
+  if (value instanceof File) {
+    const objectUrl = URL.createObjectURL(value);
+    setPreview(objectUrl);
+    
+    return () => URL.revokeObjectURL(objectUrl);
+  } 
+  // if it's an URL 
+  else if (typeof value === 'string' && value.trim() !== "") {
+    setPreview(value);
+  } 
+  else {
+    setPreview("");
+  }
+}, [value]);
+
+const handleFileChange = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    onChange(file); // we send the file to the form 
+  }
+};
+return (
   <div className="space-y-2">
     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
       {label} {required && <span className="text-red-500">*</span>}
@@ -205,25 +233,65 @@ export const ImageUpload = ({ label, value, onChange, required = false }) => (
     <div className="flex flex-col sm:flex-row gap-3">
       <input
         type="url"
-        value={value}
+        value={typeof value === 'string' ? value : ""}
         onChange={(e) => onChange(e.target.value)}
         placeholder="https://example.com/image.jpg"
-        className="flex-1 px-4 py-2.5 bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-colors"
+        disabled={value instanceof File}
+        className="flex-1 px-4 py-2.5 bg-white dark:bg-[#0d1117] border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-colors disabled:opacity-50"
       />
+      {/* Hidden file  */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        accept="image/*"
+        className="hidden"
+      />
+      {/* Button to open explorer */}
       <button
         type="button"
-        className="px-4 py-2.5 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+        onClick={() => fileInputRef.current.click()}
+        className={`px-4 py-2.5 border rounded-lg flex items-center justify-center gap-2 transition-colors ${
+          value instanceof File 
+          ? "bg-cyan-500 text-white border-cyan-500" 
+          : "bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700"
+        }`}
       >
         <Upload size={18} />
-        <span className="hidden sm:inline">Upload</span>
+        <span className="hidden sm:inline">
+          {value instanceof File ? "Selected" : "Upload"}
+        </span>
       </button>
+      {/* Reset Buton */}
+      {value && (
+        <button
+          type="button"
+            onClick={() => onChange("")}
+          className="p-2.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 border border-red-200 dark:border-red-900/30 rounded-lg transition-colors"
+           title="Remove image"
+        >
+          <X size={18} />
+        </button>
+      )}
     </div>
-    {value && (
-      <img src={value} alt="Preview" className="w-full h-32 object-cover rounded-lg mt-2" />
+    
+    {preview && (
+      <div className="mt-2 relative group">
+        <img 
+          src={preview} 
+          alt="Preview" 
+          className="w-full h-42 object-cover rounded-lg border border-gray-200 dark:border-gray-800" 
+        />
+        {value instanceof File && (
+          <div className="absolute top-2 left-2 px-2 py-1 bg-black/60 text-white text-[10px] rounded uppercase">
+            Local File
+          </div>
+        )}
+      </div>
     )}
   </div>
 );
-
+};
 
 // Tags inputs for managing lot tags 
 export const TagsInput = ({ label, tags, onChange }) => {
