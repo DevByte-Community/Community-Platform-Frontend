@@ -11,12 +11,14 @@ import {
 } from "@/features/adminDashboard/data/otherMockData";
 import { TagsManagementModal } from "@/features/adminDashboard/components/tagsManagementModal";
 import { useSelector } from "react-redux";
+import ManageBlogsModal from "@/components/Blogs/ManageBlogsModal";
 
 const AdminDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showSelectionModal, setShowSelectionModal] = useState(false);
   const [selectedType, setSelectedType] = useState(null); // to select tags type
   const [showTagsModal, setShowTagsModal] = useState(false); // for the tag modal
+  const [showManageBlogsModal, setShowManageBlogsModal] = useState(false);
 
   // Get user from Redux
   const profileUser = useSelector((state) => state.user.user);
@@ -76,6 +78,7 @@ const AdminDashboard = () => {
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
         onAddTagsClick={() => setShowSelectionModal(true)}
+        onManageBlogsClick={() => setShowManageBlogsModal(true)} 
       />
 
       {/* Main content */}
@@ -97,6 +100,11 @@ const AdminDashboard = () => {
           existingTags={getCurrentTags()}
           onSave={handleSaveTags}
         />
+        {/* Modal Manage Blogs */}
+          <ManageBlogsModal
+            isOpen={showManageBlogsModal}
+            onClose={() => setShowManageBlogsModal(false)}
+          />
       </div>
 
       {/* Overlay when sidebar is open (mobile) */}
