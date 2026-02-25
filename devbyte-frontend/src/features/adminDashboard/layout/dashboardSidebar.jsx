@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, Briefcase, Calendar, FileText, TrendingUp , Settings,LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, Briefcase, Calendar, FileText, Trash2, TrendingUp , Settings,LogOut } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import CommunityLogo from "@/assets/logos/IMG_20250811_164020_018-Photoroom.png";
@@ -53,7 +53,7 @@ const NavItem = ({ item }) => {
 /**
  * DashboardSidebar Component: Renders the entire persistent navigation bar.
  */
-const DashboardSidebar = ({ sidebarOpen, setSidebarOpen, onAddTagsClick }) => {
+const DashboardSidebar = ({ sidebarOpen, setSidebarOpen, onAddTagsClick, onManageBlogsClick }) => {
   const theme = useSelector((state) => state.theme.mode);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -110,6 +110,16 @@ const DashboardSidebar = ({ sidebarOpen, setSidebarOpen, onAddTagsClick }) => {
             <Plus size={20} />
             <span className="font-medium">Add Tags</span>
           </button>
+        </div>
+        <div>
+          <button
+            onClick={onManageBlogsClick}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-900
+            dark:text-gray-400 dark:hover:bg-slate-800 dark:hover:text-gray-200 transition-colors"
+          >
+            <Trash2 size={20} />
+            <span className="font-medium">Manage Blogs</span>
+        </button>
         </div>
       </nav>
 
