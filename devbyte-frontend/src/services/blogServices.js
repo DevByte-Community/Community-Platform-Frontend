@@ -43,6 +43,30 @@ export const blogService = {
       throw serviceError;
     }
   },
+
+  createBlogPost: async (payload = {}) => {
+    try {
+      const blogPayload = {
+        title: payload.title?.trim(),
+        description: payload.description?.trim(),
+        coverImage: payload.coverImage,
+        topic: payload.topic?.trim(),
+        featured: Boolean(payload.featured),
+      };
+
+      return await apiFetch("/blogs", {
+        method: "POST",
+        body: JSON.stringify(blogPayload),
+      });
+    } catch (error) {
+      const serviceError = new Error(
+        error?.message || "Failed to create blog post",
+      );
+      serviceError.status = error?.status;
+      serviceError.response = error?.response;
+      throw serviceError;
+    }
+  },
 };
 
 export default blogService;
