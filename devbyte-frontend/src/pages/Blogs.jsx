@@ -29,6 +29,23 @@ const Blogs = () => {
     if (parts.length === 2) return parts.pop().split(";").shift();
   };
 
+  const DeleteBlog = async (blogId) => {
+    try {
+      const token = getCookie("access_token");
+      const res = await axios.delete(`${BaseUrl}/v1/blogs/${blogId}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: "include",
+      });
+      toast.success("Blog deleted successfully!");
+      fetchBlogs(currentPage); // Refresh the blog list
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to delete blog");
+    }
+  };
+
   const fetchBlogs = async (page = 1) => {
     try {
       setLoading(true);
@@ -45,8 +62,13 @@ const Blogs = () => {
           // createdBy: "admin",
         },
       });
-      console.log(res.data);
+      // console.log(res?.data?.blogs?.id);
+
       setBlogs(res.data.blogs || []);
+      console.log("Blog IDs:", res.data.blogs[0]?.id);
+
+      // DeleteBlog(res.data.blogs[0]?.id);
+
       setTotalPages(res.data.pagination?.totalPages || 1);
       setLoading(false);
     } catch (error) {
@@ -59,6 +81,8 @@ const Blogs = () => {
   useEffect(() => {
     fetchBlogs(currentPage);
   }, [currentPage]);
+
+  console.log("Blogs Data:", blogs.id);
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-fit">

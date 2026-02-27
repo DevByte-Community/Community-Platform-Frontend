@@ -2,6 +2,7 @@ import React from "react";
 import Card from "@/components/ui/Card";
 import { CircleChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { MdLayers } from "react-icons/md";
 import { hoverEffect } from "@/lib/HoverEffect";
 
 const BlogSection = ({ blogPosts }) => {
@@ -36,9 +37,12 @@ const BlogSection = ({ blogPosts }) => {
           ))}
         </div>
       ) : (
-        <h1 className="text-2xl font-semibold text-center mt-5">
-          No Blog Post yet...
-        </h1>
+        <div className="flex flex-col justify-center items-center h-[50vh] gap-1">
+          <MdLayers className="text-[10rem] text-gray-500" />
+          <p className="text-xl md:text-2xl xl:text-3xl font-bold text-gray-800 dark:text-gray-500">
+            No Blog Posts
+          </p>
+        </div>
       )}
 
       <div className="flex justify-center w-full px-4 mt-10 md:mt-12">
