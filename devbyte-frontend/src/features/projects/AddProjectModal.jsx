@@ -1,24 +1,20 @@
-import { useState, useEffect } from "react";
-// import necessary fields from the basics input component
-import { TextAreaField, InputField , MultiSelectField, ImageUpload  } from "@/components/forms/inputs";
-// the Modals template
+import { useState } from "react";
+import { TextAreaField, InputField, MultiSelectField, ImageUpload } from "@/components/forms/inputs";
 import { Modal } from "@/components/forms/modal";
-
 import { useProjects } from "@/hooks/useProject";
 import { useTechs } from "@/hooks/useTech";
 import { useMembers } from "@/hooks/useMembers";
 
-// ==================== Add Project Modal ====================
 export const AddProjectModal = ({ isOpen, onClose }) => {
-
   const { createProject } = useProjects();
   const { techs, isLoading: techsLoading } = useTechs();
   const { members, isLoading: membersLoading } = useMembers(1, 100);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
-    // form data for the project 
-    const [formData, setFormData] = useState({
+
+  // Initial state setup
+  const initialFormState = {
     title: '',
     description: '',
     repoLink: '',
@@ -26,48 +22,52 @@ export const AddProjectModal = ({ isOpen, onClose }) => {
     techs: [],
     coverImage: '',
     contributors: [],
-  });
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // action to be performed when submiting data 
+  const [formData, setFormData] = useState(initialFormState);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
 
     try {
-      const projectData = {
+      /**
+       * Prepare payload. 
+       * If coverImage is an empty string, we remove it to avoid 
+       * the "coverImage is not allowed" validation error in JSON mode.
+       */
+      const payload = {
         title: formData.title,
         description: formData.description,
         repoLink: formData.repoLink,
-        techIds: formData.techs,
-        contributorIds: formData.contributors,
         featured: formData.featured,
-        coverImage: formData.coverImage,
+        techs: formData.techs,
+        contributors: formData.contributors,
       };
 
-      const result = await createProject(projectData);
+      // Only include coverImage if it actually has a value (File or URL)
+      if (formData.coverImage) {
+        payload.coverImage = formData.coverImage;
+      }
+
+      const result = await createProject(payload);
 
       if (result.success) {
-        // reset the form
-        setFormData({
-          title: '',
-          description: '',
-          repoLink: '',
-          featured: false,
-          techs: [],
-          coverImage: '',
-          contributors: [],
-        });
+        setFormData(initialFormState);
         onClose();
       } else {
-        setError(result.error || 'Failed to create project');
+        // Handle logic errors returned by the hook (success: false)
+        setError(Array.isArray(result.error) ? result.error.join(', ') : result.error);
       }
     } catch (err) {
-      setError(err.message || 'An error occurred');
+      // Handle unexpected exceptions
+      setError(err.message || "An unexpected error occurred");
     } finally {
       setIsSubmitting(false);
     }
@@ -76,7 +76,13 @@ export const AddProjectModal = ({ isOpen, onClose }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Add New Project">
       <form onSubmit={handleSubmit} className="space-y-4 w-full mx-auto">
-        { /** title input field */}
+        
+        {error && (
+          <div className="p-3 text-sm text-red-500 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+            {error}
+          </div>
+        )}
+
         <InputField
           label="Project Title"
           name="title"
@@ -85,7 +91,7 @@ export const AddProjectModal = ({ isOpen, onClose }) => {
           onChange={handleChange}
           required
         />
-            { /** Description text area field */}
+
         <TextAreaField
           label="Description"
           name="description"
@@ -94,38 +100,34 @@ export const AddProjectModal = ({ isOpen, onClose }) => {
           onChange={handleChange}
           required
         />
-        { /** select technolgies , multiselect field */}
+
         <MultiSelectField
           label="Technologies"
           options={techs}
           selectedIds={formData.techs}
           onChange={(newTechs) => setFormData({ ...formData, techs: newTechs })}
-          placeholder="Type to search technologies..."
+          placeholder="Search technologies..."
           isLoading={techsLoading}
           renderOption={(tech) => (
             <div className="flex items-center gap-2">
-              {tech.iconUrl && (
-                <img src={tech.iconUrl} alt={tech.name} className="w-5 h-5 object-contain"/>
-              )}
+              {tech.icon && <img src={tech.icon} alt="" className="w-5 h-5 object-contain"/>}
               <span>{tech.name}</span>
             </div>
           )}
           renderBadge={(tech) => (
-            <>
-              {tech.iconUrl && (
-                <img src={tech.iconUrl} alt={tech.name} className="w-4 h-4 object-contain"/>
-              )}
-              {tech.name}
-            </>
+            <div className="flex items-center gap-1">
+              {tech.icon && <img src={tech.icon} alt="" className="w-4 h-4 object-contain"/>}
+              <span>{tech.name}</span>
+            </div>
           )}
         />
 
         <ImageUpload
-          label="Project Image"
+          label="Project Cover Image"
           value={formData.coverImage}
-          onChange={(value) => setFormData({ ...formData, coverImage: value })}
+          onChange={(fileOrUrl) => setFormData({ ...formData, coverImage: fileOrUrl })}
         />
-        { /** github repository input field */}
+
         <InputField
           label="GitHub Repository"
           name="repoLink"
@@ -134,64 +136,42 @@ export const AddProjectModal = ({ isOpen, onClose }) => {
           value={formData.repoLink}
           onChange={handleChange}
         />
-            { /** Contributors of the project */}
+
         <MultiSelectField
           label="Contributors"
           options={members}
           selectedIds={formData.contributors}
-          onChange={(newContributors) => setFormData({ ...formData, contributors: newContributors })}
-          placeholder="Type to search contributors..."
+          onChange={(newMembers) => setFormData({ ...formData, contributors: newMembers })}
+          placeholder="Search members..."
           isLoading={membersLoading}
-          renderOption={(member) => (
+          renderOption={(m) => (
             <div className="flex items-center gap-2">
-              {member.profile_picture ? (
-                <img src={member.profile_picture} alt={member.fullname || member.name} className="w-8 h-8 rounded-full object-cover"/>
-              ) : (
-                <div className="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center">
-                  <span className="text-xs font-medium">
-                    {(member.fullname || member.name || '?')[0].toUpperCase()}
-                  </span>
-                </div>
-              )}
+              <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
+                {m.profilePicture ? 
+                  <img src={m.profilePicture} alt="" className="w-full h-full object-cover"/> : 
+                  <div className="flex items-center justify-center h-full text-xs">?</div>
+                }
+              </div>
               <div>
-                <p className="text-sm font-medium">{member.fullname || member.name}</p>
-                {member.email && <p className="text-xs text-gray-500">{member.email}</p>}
+                <p className="text-sm font-medium">{m.fullname}</p>
+                <p className="text-xs text-gray-500">{m.email}</p>
               </div>
             </div>
           )}
-          renderBadge={(member) => (
-            <>
-              {member.profile_picture && (
-                <img src={member.profile_picture} alt={member.fullname || member.name} className="w-4 h-4 rounded-full object-cover"
-                />
-              )}
-              {member.fullname || member.name}
-            </>
-          )}
+          renderBadge={(m) => <span>{m.fullname}</span>}
         />
 
-    {/* Featured Toggle */}
         <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700 rounded-lg">
           <div>
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Featured Project
-            </label>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              Show at the top of the list
-            </p>
+            <label className="text-sm font-medium">Featured Project</label>
+            <p className="text-xs text-gray-500">Show at the top of the list</p>
           </div>
           <button
             type="button"
             onClick={() => setFormData({ ...formData, featured: !formData.featured })}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-              formData.featured ? "bg-cyan-500" : "bg-gray-300 dark:bg-gray-600"
-            }`}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${formData.featured ? "bg-cyan-500" : "bg-gray-300 dark:bg-gray-600"}`}
           >
-            <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                formData.featured ? "translate-x-6" : "translate-x-1"
-              }`}
-            />
+            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${formData.featured ? "translate-x-6" : "translate-x-1"}`} />
           </button>
         </div>
 
@@ -199,15 +179,14 @@ export const AddProjectModal = ({ isOpen, onClose }) => {
           <button
             type="button"
             onClick={onClose}
-            disabled={isSubmitting}
-            className="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            className="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
           >
             Cancel
           </button>
           <button
             type="submit"
-            disabled={isSubmitting || formData.contributors.length === 0}
-            className="flex-1 px-6 py-3 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition-colors font-medium disabled:opacity-50" 
+            disabled={isSubmitting}
+            className="flex-1 px-6 py-3 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 disabled:opacity-50 font-medium"
           >
             {isSubmitting ? 'Creating...' : 'Add Project'}
           </button>
