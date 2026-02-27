@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Trash2, Search, Loader2, X, BookOpen } from "lucide-react";
 import blogService from "@/services/blogServices";
+import { toast, Toaster } from "react-hot-toast";
 
 /**
  * ManageBlogsModal
@@ -57,10 +58,13 @@ const ManageBlogsModal = ({ isOpen, onClose }) => {
   const handleDelete = async (id) => {
     setDeletingId(id);
     try {
-      // use await blogService.deleteBlog(id);
-      await new Promise((r) => setTimeout(r, 600));
+      await blogService.deleteBlogPost(id);
       setBlogs((prev) => prev.filter((b) => b.id !== id));
       setConfirmId(null);
+      toast.success("Blog post deleted successfully");
+    } catch (err) {
+      setError(err?.message || "Failed to delete blog post");
+      toast.error(err?.message || "Failed to delete blog post");
     } finally {
       setDeletingId(null);
     }
@@ -68,6 +72,7 @@ const ManageBlogsModal = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+      <Toaster />
       <div className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-gray-700 rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">

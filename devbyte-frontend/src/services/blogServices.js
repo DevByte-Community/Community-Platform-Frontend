@@ -67,6 +67,25 @@ export const blogService = {
       throw serviceError;
     }
   },
+
+  deleteBlogPost: async (id) => {
+    try {
+      if (!id) {
+        throw new Error("Blog id is required");
+      }
+
+      return await apiFetch(`/blogs/${id}`, {
+        method: "DELETE",
+      });
+    } catch (error) {
+      const serviceError = new Error(
+        error?.message || "Failed to delete blog post",
+      );
+      serviceError.status = error?.status;
+      serviceError.response = error?.response;
+      throw serviceError;
+    }
+  },
 };
 
 export default blogService;
