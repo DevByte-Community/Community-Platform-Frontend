@@ -153,24 +153,7 @@ const Blogs = () => {
             </PaginationContent>
           </Pagination>
 
-          <div className="flex justify-center gap-2 mt-2 ">
-            {/* {ButtonsText.map((ele, idx) => (
-              <Button
-                key={idx}
-                children={ele}
-                onClick={() => {
-                  SetActiveBtn(ele);
-                  // prevCards();
-
-                  paginate();
-                }}
-                className={`border border-gray-600 rounded-sm ${
-                  ActiveBtn == ele &&
-                  "bg-gradient-to-tr from-[#00AEEF] to-[#6A5DFF] text-white border-none"
-                }`}
-              />
-            ))} */}
-          </div>
+          <div className="flex justify-center gap-2 mt-2 "></div>
         </div>
 
         {/*  */}
