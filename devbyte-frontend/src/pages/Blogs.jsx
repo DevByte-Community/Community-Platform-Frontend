@@ -2,13 +2,12 @@ import React, { useEffect, useState } from "react";
 import BlogsCard from "@/components/Blogs/BlogsCard";
 import { toast, Toaster } from "react-hot-toast";
 import HeaderWrapper from "@/components/ui/Header";
-import axios from "axios";
 import Skeleton from "@/components/Blogs/Skeleton";
 import { MdLayers } from "react-icons/md";
+import blogService from "@/services/blogServices";
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
@@ -21,38 +20,20 @@ const Blogs = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
 
-  const BaseUrl = import.meta.env.VITE_API_BASE_URL;
-
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-  };
-
   const fetchBlogs = async (page = 1) => {
     try {
       setLoading(true);
-      const token = getCookie("access_token");
-      const res = await axios.get(`${BaseUrl}/v1/blogs`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: "include",
-        params: {
-          page,
-          pageSize: 6,
-          // topics: "dev communities",
-          // createdBy: "admin",
-        },
+      const res = await blogService.getAllBlogs({
+        page,
+        pageSize: 6,
       });
-      console.log(res.data);
-      setBlogs(res.data.blogs || []);
-      setTotalPages(res.data.pagination?.totalPages || 1);
-      setLoading(false);
+
+      setBlogs(res.blogs || []);
+      setTotalPages(res.pagination?.totalPages || 1);
     } catch (error) {
+      toast.error(error?.message || "Failed to fetch blogs");
+    } finally {
       setLoading(false);
-      console.log(error);
-      toast.error("Failed to fetch blogs");
     }
   };
 
@@ -119,7 +100,7 @@ const Blogs = () => {
             ) : (
               <>
                 {blogs.map((ele, idx) => (
-                  <BlogsCard data={ele} key={idx} />
+                  <BlogsCard data={ele} key={ele.id || ele.slug || idx} />
                 ))}
               </>
             )}
@@ -172,24 +153,7 @@ const Blogs = () => {
             </PaginationContent>
           </Pagination>
 
-          <div className="flex justify-center gap-2 mt-2 ">
-            {/* {ButtonsText.map((ele, idx) => (
-              <Button
-                key={idx}
-                children={ele}
-                onClick={() => {
-                  SetActiveBtn(ele);
-                  // prevCards();
-
-                  paginate();
-                }}
-                className={`border border-gray-600 rounded-sm ${
-                  ActiveBtn == ele &&
-                  "bg-gradient-to-tr from-[#00AEEF] to-[#6A5DFF] text-white border-none"
-                }`}
-              />
-            ))} */}
-          </div>
+          <div className="flex justify-center gap-2 mt-2 "></div>
         </div>
 
         {/*  */}
