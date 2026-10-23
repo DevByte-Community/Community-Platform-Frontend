@@ -57,16 +57,13 @@ const MembersSection = ({
                           {member.fullname}
                         </h1>
                         <h1 className="text-[16px]">{member.role}</h1>
-                        <div className="flex gap-5">
-                          {member.skills.map((skill, tIdx) => (
-                            <h1
-                              key={`tech-${idx}-${mIdx}-${tIdx}`}
-                              className="bg-[#fafafa] dark:bg-black dark:text-gray-300  border border-gray-200 dark:border-[#2A2F36] rounded-sm text-black py-[2px] px-2 text-[12px] font-semibold"
-                            >
-                              {typeof skill === "string" ? skill : skill.name}
-                            </h1>
-                          ))}
-                        </div>
+                        {member.stack && (
+                          <h1 className="bg-[#fafafa] dark:bg-black dark:text-gray-300 border border-gray-200 dark:border-[#2A2F36] rounded-sm text-black py-[2px] px-2 text-[12px] font-semibold">
+                            {typeof member.stack === "string"
+                              ? member.stack
+                              : member.stack.name}
+                          </h1>
+                        )}
                       </div>
                     ))}
                   </div>
